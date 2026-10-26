@@ -1,14 +1,15 @@
-﻿# 把周报插件注册进 tauri profile（幂等，可重复运行）
-# 用法：pwsh -ExecutionPolicy Bypass -File E:\default_project\weekly\install.ps1
+# 把周报插件注册进 tauri profile（幂等，可重复运行）
+# 用法：pwsh -ExecutionPolicy Bypass -File <仓库目录>\install.ps1
 $ErrorActionPreference = 'Stop'
 
-$source = 'E:\default_project\weekly'
+# 插件源码 = 本脚本所在目录，所以仓库可以放在任意位置
+$source = $PSScriptRoot
 $profileDir = Join-Path $env:USERPROFILE '.dsh\profiles\tauri'
 $pkgPath = Join-Path $profileDir 'package.json'
 $modulesDir = Join-Path $profileDir 'node_modules'
 $linkPath = Join-Path $modulesDir 'dsh-plugin-weekly'
 
-if (-not (Test-Path $source)) { throw "插件源码不在这里：$source" }
+if (-not (Test-Path (Join-Path $source 'package.json'))) { throw "这里不像插件目录（缺 package.json）：$source" }
 if (-not (Test-Path $pkgPath)) { throw "找不到 profile package.json：$pkgPath" }
 
 # 1) 链接进 profile 的 node_modules（DSH 只从这里/依赖里扫插件）
@@ -42,5 +43,5 @@ $json = $pkg | ConvertTo-Json -Depth 20
 Write-Host "registered bundle: dsh-plugin-weekly (共 $($bundles.Count) 个 bundle)"
 
 Write-Host ''
-Write-Host '完成。重启 DSH 应用后，在 设置 -> 插件 -> 周报 打开面板。'
+Write-Host '完成。重启 DSH 应用后，左侧边栏点「周报」图标打开面板。'
 Write-Host '首次发信前需要在终端执行一次：wecom-cli.cmd auth init'

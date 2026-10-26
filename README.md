@@ -1,6 +1,6 @@
-﻿# 周报（dsh-plugin-weekly）
+﻿# dsh-weekly-report
 
-在 DSH 设置面板里把「这一周在 DSH 里干的事 + 手工记下的其他事」整理成四段式周报，审完稿后通过企业微信邮
+在 DSH 侧边栏的「周报」面板里，把「这一周在 DSH 里干的事 + 手工记下的其他事」整理成四段式周报，审完稿后通过企业微信邮
 件发给领导。
 
 - **不做自动外发**：生成 → 你自己改 → 预览邮件 → 点「确认发送」，四步缺一不可。
@@ -9,23 +9,16 @@
 
 ## 一、安装
 
-插件源码在 `E:\default_project\weekly`。DSH 只从两个地方加载客户端插件：profile 的 `package.json`
-依赖（pnpm link 过来的 symlink 也算）和 `~/.dsh/profiles/tauri/node_modules`。这里把它链接进去：
+先克隆到任意目录（下面以 `E:\weekly` 为例），然后跑仓库里的 `install.ps1`：
 
 ```powershell
-# 1) 链接到 profile 自己的 node_modules（DSH 才会去扫）
-$profile = "$env:USERPROFILE\.dsh\profiles\tauri"
-$link = Join-Path $profile "node_modules\dsh-plugin-weekly"
-if (Test-Path $link) { (Get-Item $link).Delete() }
-New-Item -ItemType Junction -Path $link -Target "E:\default_project\weekly" | Out-Null
-
-# 2) 让 profile 把它算作一个 bundle
-$pkgPath = Join-Path $profile "package.json"
-$pkg = Get-Content $pkgPath -Raw -Encoding UTF8 | ConvertFrom-Json
-$pkg.dependencies | Add-Member -NotePropertyName "dsh-plugin-weekly" -NotePropertyValue "link:E:\default_project\weekly" -Force
-$pkg.dsh.profile.bundles = @($pkg.dsh.profile.bundles) + "dsh-plugin-weekly" | Select-Object -Unique
-$pkg | ConvertTo-Json -Depth 20 | Set-Content $pkgPath -Encoding UTF8
+git clone git@github.com:Yishui010/dsh-weekly-report.git E:\weekly
+pwsh -ExecutionPolicy Bypass -File E:\weekly\install.ps1
 ```
+
+脚本做两件事（幂等，可重复跑）：在 `~/.dsh/profiles/tauri/node_modules` 下建一个指回源码目录的 junction，
+再把 `dsh-plugin-weekly` 写进该 profile 的 `package.json`（`dependencies` + `dsh.profile.bundles`）。
+DSH 只从这两个地方加载客户端插件，缺一不可。
 
 然后**重启 DSH 应用**（客户端插件在启动时打包，热更新不会重新扫描 bundle 列表）。
 
