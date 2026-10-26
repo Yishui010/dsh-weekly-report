@@ -1,0 +1,4 @@
+# dsh-plugin-weekly bundle patch: registers the weekly-report plugin entry.
+- insert:
+    - id: weekly
+      name: 'dsh-plugin-weekly'
