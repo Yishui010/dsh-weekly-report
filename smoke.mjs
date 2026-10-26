@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 冒烟测试：验证宿主入口能在 profile 的 node_modules 下解析依赖、周区间计算正确。
  * 用法（必须走 junction 路径 + --preserve-symlinks，让 bare import 解析到 profile 的依赖）：
  *   node --preserve-symlinks "%USERPROFILE%\.dsh\profiles\tauri\node_modules\dsh-plugin-weekly\smoke.mjs"

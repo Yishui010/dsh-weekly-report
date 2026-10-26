@@ -1,4 +1,4 @@
-﻿# dsh-weekly-report
+# dsh-weekly-report
 
 在 DSH 侧边栏的「周报」面板里，把「这一周在 DSH 里干的事 + 手工记下的其他事」整理成四段式周报，审完稿后通过企业微信邮
 件发给领导。
